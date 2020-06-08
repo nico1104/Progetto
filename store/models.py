@@ -16,21 +16,10 @@ class Customer(models.Model):
         return self.name
 
 
-CHOOSE_SIZE = (
-    ('Extra Small', 'XS'),
-    ('Small', 'S'),
-    ('Medium', 'M'),
-    ('Large', 'L'),
-    ('Extra Large', 'XL'),
-    ('Double Large', 'XXL'),
-    ('Triple Large', 'XXXL'),
-)
-
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
     category = models.CharField(max_length=30)
-    size = MultiSelectField(choices=CHOOSE_SIZE)
     price = models.FloatField()
     image = models.ImageField(null=True, blank=True)
 
