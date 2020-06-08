@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.views.generic import CreateView
 from .models import *
 
 
@@ -33,5 +34,4 @@ def checkout(request):
 
     context = {'items': items, 'order': order}
     return render(request, 'store/checkout.html', context)
-
 
