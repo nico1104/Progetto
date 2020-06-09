@@ -63,13 +63,13 @@ def add_to_cart(request):
 
 
 class SignUpView(TemplateView):
-    template_name = 'signup.html'
+    template_name = 'registration/register.html'
 
 
 def home(request):
     if request.user.is_authenticated:
         if request.user.is_seller:
-            return redirect('#')
+            return redirect('registration/signup_form.html')
         else:
             return redirect('#')
     return render(request, '#')
@@ -93,7 +93,7 @@ class CustomerSignUpView(CreateView):
 class SellerSignUpView(CreateView):
     model = User
     form_class = SellerSignUpForm
-    template_name = 'registration/register.html'
+    template_name = 'registration/signup_form.html'
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'seller'
