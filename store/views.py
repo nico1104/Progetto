@@ -48,7 +48,7 @@ def add_to_cart(request):
             size = form.cleaned_data.get('size')
             cart_add.save()
             messages.success(request, 'Aggiunto al carrello')
-            return redirect('store/store.html')
+            return redirect('store:store')
         else:
             messages.error(request, 'Impossibile aggiungere il prodotto al carrello')
     else:
@@ -56,7 +56,10 @@ def add_to_cart(request):
 
     context = {'form': form}
 
-    return render(request, 'store/store.html', context)
+    return render(request, 'store:store', context)
+
+
+
 
 
 ############ USER ##################

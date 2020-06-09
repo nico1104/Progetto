@@ -7,23 +7,26 @@
         {% for product in products %}
         <div class="col-lg-4">
             <img class="thumbnail" src="{{ product.imageURL }}">
-            <div class="box-element product"> <!--guardo in css style-->
+            <form class="box-element product"> <!--guardo in css style-->
                 <h6><strong>{{ product.name }}</strong></h6>
                 <hr>
                 <h7>{{ product.category }}</h7>
                 <hr>
-                <button class="btn btn-outline-secondary add btn"> Aggiungi al carrello
-                </button>
-                <br>
+
                 <a class="btn btn-outline-success" href="#">Dettagli</a>
                 <h4 style="display: inline-block; float: right">€{{ product.price|floatformat:2 }}</h4>
 
-                <SELECT>
-                    {% for choice in available_size %}
+                <form method="POST" class="form-group">
+                    {% csrf_token %}
+                <select>
+                    {% for choice in product.available_size %}
                          <OPTION Value="Taglia">{{ choice }}</OPTION>
                     {% endfor %}
-                </SELECT>
-            </div>
+                </select>
+                <button type="submit" class="btn btn-success" style="margin-left:auto;margin-right:auto;display:block;">Aggiungi al carrello</button>
+                </form>
+            </form>
+
         </div>
         {% endfor %}
 
