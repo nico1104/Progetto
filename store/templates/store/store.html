@@ -1,3 +1,4 @@
+  
 {% extends 'store/main.html' %}
 {% load static %}
 
@@ -18,12 +19,9 @@
                 <h4 style="display: inline-block; float: right">€{{ product.price|floatformat:2 }}</h4>
 
                 <SELECT>
-                    <OPTION Value="Taglia">XS</OPTION>
-                    <OPTION Value="Taglia">S</OPTION>
-                    <OPTION Value="Taglia">M</OPTION>
-                    <OPTION Value="Taglia">L</OPTION>
-                    <OPTION Value="Taglia">XL</OPTION>
-                    <OPTION Value="Taglia">XXL</OPTION>
+                    {% for choice in available_size %}
+                         <OPTION Value="Taglia">{{ choice }}</OPTION>
+                    {% endfor %}
                 </SELECT>
             </div>
         </div>

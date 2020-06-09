@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'store.apps.StoreConfig',
+    'crispy_forms',
     'multiselectfield',
 ]
 
@@ -124,6 +125,14 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+AUTH_USER_MODEL = 'store.User'
+
+LOGIN_URL = 'store:login'
+LOGOUT_URL = 'store:logout'
+LOGIN_REDIRECT_URL = 'store:store'
+LOGOUT_REDIRECT_URL = 'store:store'
 
 MEDIA_URL = '/images/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '/static/images')
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

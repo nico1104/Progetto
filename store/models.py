@@ -1,8 +1,14 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+from multiselectfield import MultiSelectField
+
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-
+class User(AbstractUser):
+    is_customer = models.BooleanField(default=False)
+    is_seller = models.BooleanField(default=False)
 # Create your models here.
 
 
@@ -15,11 +21,21 @@ class Customer(models.Model):
         return self.name
 
 
+SIZE_CHOICES = [
+    ('XS', 'XS'),
+    ('S', 'S'),
+    ('M', 'M'),
+    ('L', 'L'),
+    ('XL', 'XL'),
+    ('XXL', 'XXL'),
+]
+
+
 class Product(models.Model):
     name = models.CharField(max_length=200)
     category = models.CharField(max_length=30)
-    size = models.CharField(max_length=50, default=True)
-    price = models.FloatField()
+    available_size = MultiSelectField(max_length=50, choices=SIZE_CHOICES, null=True)
+    price = models.DecimalField(max_digits=7, decimal_places=2)
     image = models.ImageField(null=True, blank=True)
 
     def __str__(self):
@@ -79,3 +95,15 @@ class ShippingAddress(models.Model):
 
     def __str__(self):
         return self.address
+
+
+####################### USER CREATION #########################
+
+#STUDENT = CUSTOMER
+
+
+
+
+
+
+
