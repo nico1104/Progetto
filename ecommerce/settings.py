@@ -125,6 +125,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+LANGUAGE_CODE = 'it-IT'
+
 AUTH_USER_MODEL = 'store.User'
 
 LOGIN_URL = 'store:login'

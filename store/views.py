@@ -81,7 +81,7 @@ class CustomerSignUpView(CreateView):
     template_name = 'registration/signup_form.html'
 
     def get_context_data(self, **kwargs):
-        kwargs['user_type'] = 'customer'
+        kwargs['user_type'] = 'cliente'
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
@@ -96,7 +96,7 @@ class SellerSignUpView(CreateView):
     template_name = 'registration/signup_form.html'
 
     def get_context_data(self, **kwargs):
-        kwargs['user_type'] = 'seller'
+        kwargs['user_type'] = 'fornitore'
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):

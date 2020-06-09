@@ -29,8 +29,10 @@ class ProductForm(forms.ModelForm):
 ########## USER ############
 
 class CustomerSignUpForm(UserCreationForm):
+
     class Meta(UserCreationForm.Meta):
         model = User
+        fields = ['username', 'email', 'password1', 'password2']
 
     @transaction.atomic
     def save(self):
@@ -38,13 +40,23 @@ class CustomerSignUpForm(UserCreationForm):
         user.is_customer = True
         user.save()
         customer = Customer.objects.create(user=user)
-
         return user
+
+    def clean_email(self):
+        """
+             Controllo che l'email non sia presa da alcun utente
+        """
+        data = self.cleaned_data['email']
+        if User.objects.filter(email=data).exists():
+            raise forms.ValidationError("La mail selezionata è già esistente, scegline una differente")
+        return data
 
 
 class SellerSignUpForm(UserCreationForm):
+
     class Meta(UserCreationForm.Meta):
         model = User
+        fields = ['username', 'email', 'password1', 'password2']
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -52,3 +64,12 @@ class SellerSignUpForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+    def clean_email(self):
+        """
+             Controllo che l'email non sia presa da alcun utente
+        """
+        data = self.cleaned_data['email']
+        if User.objects.filter(email=data).exists():
+            raise forms.ValidationError("La mail selezionata è già esistente, scegline una differente")
+        return data

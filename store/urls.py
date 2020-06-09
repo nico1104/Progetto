@@ -13,10 +13,9 @@ urlpatterns = [
     path('checkout/', views.checkout, name="checkout"),
     path('user/login', auth_views.LoginView.as_view(), name='login'),
     path('accounts/', include('django.contrib.auth.urls')),
-
     path('signup/', views.SignUpView.as_view(), name='signup'),
-    path('signup/student/', views.CustomerSignUpView.as_view(), name='customer_signup'),
-    path('signup/teacher/', views.SellerSignUpView.as_view(), name='seller_signup'),
+    path('signup/cliente/', views.CustomerSignUpView.as_view(), name='customer_signup'),
+    path('signup/fornitore/', views.SellerSignUpView.as_view(), name='seller_signup'),
 
 ]
 
