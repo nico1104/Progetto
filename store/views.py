@@ -87,7 +87,7 @@ class CustomerSignUpView(CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        return redirect('store/store.html')
+        return redirect('store:store')
 
 
 class SellerSignUpView(CreateView):
@@ -102,4 +102,4 @@ class SellerSignUpView(CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        return redirect('store/store.html')
+        return redirect('store:store')
