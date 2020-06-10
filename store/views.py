@@ -1,4 +1,9 @@
+import json
+import datetime
+
 from django.contrib.auth import login
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from pyexpat.errors import messages
 
 from django.shortcuts import render, redirect
@@ -9,8 +14,19 @@ from .models import *
 
 
 def store(request):
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    else:
+        # Create empty cart for now for non-logged in user
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+
     products = Product.objects.all()
-    context = {'products': products}
+    context = {'products': products, 'cartItems': cartItems}
     return render(request, 'store/store.html', context)
 
 
@@ -19,11 +35,14 @@ def cart(request):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
     else:
+        # Create empty cart for now for non-logged in user
         items = []
         order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
 
-    context = {'items': items, 'order': order}
+    context = {'items': items, 'order': order, 'cartItems': cartItems}
     return render(request, 'store/cart.html', context)
 
 
@@ -32,37 +51,65 @@ def checkout(request):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
     else:
+        # Create empty cart for now for non-logged in user
         items = []
         order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
 
-    context = {'items': items, 'order': order}
+    context = {'items': items, 'order': order, 'cartItems': cartItems}
     return render(request, 'store/checkout.html', context)
 
 
-def add_to_cart(request):
-    if request.method == 'POST':
-        form = ProductForm(request.POST)
-        if form.is_valid():
-            cart_add = form.save(commit=False)
-            size = form.cleaned_data.get('size')
-            cart_add.save()
-            messages.success(request, 'Aggiunto al carrello')
-            return redirect('store:store')
-        else:
-            messages.error(request, 'Impossibile aggiungere il prodotto al carrello')
+def updateItem(request):
+    data = json.loads(request.body)
+    productId = data['productId']
+    action = data['action']
+    print('Action:', action)
+    print('Product:', productId)
+
+    customer = request.user.customer
+    product = Product.objects.get(id=productId)
+    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+
+    orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+
+    if action == 'add':
+        orderItem.quantity = (orderItem.quantity + 1)
+    elif action == 'remove':
+        orderItem.quantity = (orderItem.quantity - 1)
+
+    orderItem.save()
+
+    if orderItem.quantity <= 0:
+        orderItem.delete()
+
+    return JsonResponse('Item was added', safe=False)
+
+
+@csrf_exempt
+def processOrder(request):
+
+    transaction_id = datetime.datetime.now().timestamp()
+    body_unicode = request.body.decode('utf-8')
+    data = json.loads(body_unicode)
+
+
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        total = (data['form']['total'])
+        order.transaction_id = transaction_id
+
+        if total == order.get_cart_total:
+            order.complete = True
+        order.save()
+
     else:
-        form = ProductForm()
+        print("Utente non loggato")
 
-    context = {'form': form}
-
-    return render(request, 'store:store', context)
-
-
-
-
-
-############ USER ##################
+    return JsonResponse('Payment submitted..', safe=False)
 
 
 class SignUpView(TemplateView):
@@ -106,3 +153,29 @@ class SellerSignUpView(CreateView):
         user = form.save()
         login(self.request, user)
         return redirect('store:store')
+
+
+def updateItem(request):
+    data = json.loads(request.body)
+    productId = data['productId']
+    action = data['action']
+    print('Action:', action)
+    print('Product:', productId)
+
+    customer = request.user.customer
+    product = Product.objects.get(id=productId)
+    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+
+    orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+
+    if action == 'add':
+        orderItem.quantity = (orderItem.quantity + 1)
+    elif action == 'remove':
+        orderItem.quantity = (orderItem.quantity - 1)
+
+    orderItem.save()
+
+    if orderItem.quantity <= 0:
+        orderItem.delete()
+
+    return JsonResponse('Item was added', safe=False)
