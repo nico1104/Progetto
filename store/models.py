@@ -29,13 +29,25 @@ SIZE_CHOICES = [
     ('XXL', 'XXL'),
 ]
 
+CATEGORY = [
+    ('Guanti', 'Guanti'),
+    ('Giacca', 'Giacca'),
+    ('Pantaloni', 'Pantaloni'),
+    ('Tuta', 'Tuta'),
+    ('Stivali', 'Stivali'),
+    ('Casco', 'Casco'),
+    ('Manutenzione moto', 'Manutenzione moto'),
+
+]
+
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
-    category = models.CharField(max_length=30)
+    category = models.CharField(max_length=50, choices=CATEGORY, null=True)
     available_size = MultiSelectField(max_length=50, choices=SIZE_CHOICES, null=True)
     price = models.DecimalField(max_digits=7, decimal_places=2)
-    image = models.ImageField(null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    image = models.ImageField(null=True, blank=True, upload_to='')
 
     def __str__(self):
         return self.name

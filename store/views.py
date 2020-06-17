@@ -9,7 +9,7 @@ from pyexpat.errors import messages
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, TemplateView
 
-from .forms import ProductForm, CustomerSignUpForm, SellerSignUpForm
+from .forms import ProductForm, CustomerSignUpForm, SellerSignUpForm, ProdottoAddForm
 from .models import *
 
 
@@ -90,11 +90,9 @@ def updateItem(request):
 
 @csrf_exempt
 def processOrder(request):
-
     transaction_id = datetime.datetime.now().timestamp()
     body_unicode = request.body.decode('utf-8')
     data = json.loads(body_unicode)
-
 
     if request.user.is_authenticated:
         customer = request.user.customer
@@ -179,3 +177,18 @@ def updateItem(request):
         orderItem.delete()
 
     return JsonResponse('Item was added', safe=False)
+
+
+def product_insert(request):
+    if request.method == 'POST':
+        form = ProdottoAddForm(request.POST, request.FILES)
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.user = request.user
+            product.save()
+    else:
+        form = ProdottoAddForm
+
+    logged_user_username = request.user.username
+    context = {'form': form, 'logged_user_username': logged_user_username}
+    return render(request, 'store/add_product.html', context)

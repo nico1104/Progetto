@@ -11,6 +11,7 @@ urlpatterns = [
     path('', views.store, name="store"),
     path('cart/', views.cart, name="cart"),
     path('checkout/', views.checkout, name="checkout"),
+    path('add', views.product_insert, name='add-product'),
     path('user/login', auth_views.LoginView.as_view(), name='login'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('signup/', views.SignUpView.as_view(), name='signup'),

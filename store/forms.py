@@ -1,3 +1,4 @@
+import self as self
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
@@ -73,3 +74,17 @@ class SellerSignUpForm(UserCreationForm):
         if User.objects.filter(email=data).exists():
             raise forms.ValidationError("La mail selezionata è già esistente, scegline una differente")
         return data
+
+
+class ProdottoAddForm (forms.ModelForm):
+
+    class Meta:
+
+        model = Product
+        fields = ('name', 'category', 'available_size', 'price', 'image')
+
+    def save(self, commit=True):
+        product = super().save(commit=False)
+        product.image = self.cleaned_data.get('image')
+        product.save()
+        return product
