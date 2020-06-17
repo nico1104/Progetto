@@ -5,6 +5,7 @@ from django.contrib.auth import login, user_logged_out
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import AnonymousUser
 from django.http import JsonResponse
+from django.template.defaulttags import comment
 from django.views.decorators.csrf import csrf_exempt
 from pyexpat.errors import messages
 import django_tables2 as tables
@@ -63,32 +64,6 @@ def checkout(request):
 
     context = {'items': items, 'order': order, 'cartItems': cartItems}
     return render(request, 'store/checkout.html', context)
-
-
-def updateItem(request):
-    data = json.loads(request.body)
-    productId = data['productId']
-    action = data['action']
-    print('Action:', action)
-    print('Product:', productId)
-
-    customer = request.user.customer
-    product = Product.objects.get(id=productId)
-    order, created = Order.objects.get_or_create(customer=customer, complete=False)
-
-    orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
-
-    if action == 'add':
-        orderItem.quantity = (orderItem.quantity + 1)
-    elif action == 'remove':
-        orderItem.quantity = (orderItem.quantity - 1)
-
-    orderItem.save()
-
-    if orderItem.quantity <= 0:
-        orderItem.delete()
-
-    return JsonResponse('Item was added', safe=False)
 
 
 @csrf_exempt
@@ -219,7 +194,8 @@ def product_delete(request, id):
         Returns:
              Ritorna la stessa pagina aggiornata
     """
-    Product.objects.get(id=id).delete()
+    product = Product.objects.get(id=id)
+    product.delete()
     return redirect('store:load-product')
 
 
@@ -231,7 +207,7 @@ def profile_view(request):
     """
 
     logged_user_username = request.user.username
-    context = {'logged_user_username': logged_user_username, "email": request.user.email}
+    context = {'logged_user_username': logged_user_username, 'email': request.user.email}
     return render(request, 'store/user_profile.html', context)
 
 
@@ -248,14 +224,14 @@ def loaded_product_view(request):
     table = ProfileTextTable(loaded_products)
     RequestConfig(request).configure(table)
 
-    context = {'logged_user_username': logged_user_username, 'table': table }
+    context = {'logged_user_username': logged_user_username, 'table': table}
     return render(request, 'store/load_product.html', context)
+
 
 class ProfileTextTable(tables.Table):
     """
         Definisce una tabella personalizzata per visualizzare gli articoli inseriti dall'utente attualmente loggato
     """
-
 
     class Meta:
         model = Product
@@ -269,5 +245,3 @@ class ProfileTextTable(tables.Table):
                             verbose_name='')
     delete = TemplateColumn(exclude_from_export=False, template_name='store/delete.html', orderable=False,
                             verbose_name='')
-
-

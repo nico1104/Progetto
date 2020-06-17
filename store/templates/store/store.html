@@ -16,9 +16,9 @@
                 <a class="btn btn-outline-success" href="#">Dettagli</a>
                 <h4 style="display: inline-block; float: right">€{{ product.price|floatformat:2 }}</h4>
 
-                <form method="POST" class="form-group">
+                <form method="POST" class="form-group" action="process.php">
                     {% csrf_token %}
-                <select>
+                <select name="size_choice">
                     {% for choice in product.available_size %}
                          <OPTION Value="Taglia">{{ choice }}</OPTION>
                     {% endfor %}
@@ -31,7 +31,7 @@
 
         </div>
         {% endfor %}
-
     </div>
 
 {% endblock content %}
+

@@ -31,6 +31,7 @@
                     <div style="flex:2"><strong>Prodotto</strong></div>
                     <div style="flex:1"><strong>Prezzo</strong></div>
                     <div style="flex:1"><strong>Quantità</strong></div>
+                     <div style="flex:1"><strong>Taglia</strong></div>
                     <div style="flex:1"><strong>Totale</strong></div>
                 </div>
 
@@ -46,6 +47,10 @@
 
                             <img data-product= "{{ item.product.id }}" data-action="remove" class="chg-quantity update-cart" src="{% static  'images/arrow-down.png' %}">
                         </div>
+                    </div>
+                    <div style="flex:1">
+                        <!--AGGIUNGERE TAGLIA-->
+                        {{ item.size }}
                     </div>
                     <div style="flex:1"><p>€{{ item.get_total|floatformat:2 }}</p></div>
                 </div>
