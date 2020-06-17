@@ -1,11 +1,14 @@
 import json
 import datetime
 
-from django.contrib.auth import login
+from django.contrib.auth import login, user_logged_out
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import AnonymousUser
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from pyexpat.errors import messages
-
+import django_tables2 as tables
+from django_tables2 import SingleTableView, TemplateColumn, RequestConfig
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, TemplateView
 
@@ -153,6 +156,17 @@ class SellerSignUpView(CreateView):
         return redirect('store:store')
 
 
+@login_required
+def logout(request):
+    user = getattr(request, 'user', None)
+    user = None
+    user_logged_out.send(sender=User.__class__, request=request, user=User)
+    request.session.flush()
+    if hasattr(request, 'user'):
+        request.user = AnonymousUser()
+    return redirect('store:login')
+
+
 def updateItem(request):
     data = json.loads(request.body)
     productId = data['productId']
@@ -192,3 +206,68 @@ def product_insert(request):
     logged_user_username = request.user.username
     context = {'form': form, 'logged_user_username': logged_user_username}
     return render(request, 'store/add_product.html', context)
+
+
+def product_delete(request, id):
+    """
+        Elimina il prodotto corrispondente alla riga in cui viene premuto il tasto delete nella pagina che mostra
+        gli articoli caricati dall'utente attualmente loggato.
+
+        Args:
+            id: id del prodotto
+
+        Returns:
+             Ritorna la stessa pagina aggiornata
+    """
+    Product.objects.get(id=id).delete()
+    return redirect('store:load-product')
+
+
+def profile_view(request):
+    """
+        Funzione che si occupa della visualizzazione del profilo utente e gestione degli termini della balcklist e
+        cancellazione degli articoli
+
+    """
+
+    logged_user_username = request.user.username
+    context = {'logged_user_username': logged_user_username, "email": request.user.email}
+    return render(request, 'store/user_profile.html', context)
+
+
+def loaded_product_view(request):
+    """
+        Funzione che si occupa della visualizzazione dei testi caricati dall'utente
+
+        Returns:
+             tutti i testi caricati dall'utente loggato
+    """
+
+    logged_user_username = request.user.username
+    loaded_products = Product.objects.filter(user=request.user.id)
+    table = ProfileTextTable(loaded_products)
+    RequestConfig(request).configure(table)
+
+    context = {'logged_user_username': logged_user_username, 'table': table }
+    return render(request, 'store/load_product.html', context)
+
+class ProfileTextTable(tables.Table):
+    """
+        Definisce una tabella personalizzata per visualizzare gli articoli inseriti dall'utente attualmente loggato
+    """
+
+
+    class Meta:
+        model = Product
+        template_name = "django_tables2/bootstrap4.html"
+        fields = ("name", "category", "available_size", "user", "price")
+        attrs = {"class": "table table-striped table-bordered sortable",
+                 "data-toggle": "table"
+                 }
+
+    detail = TemplateColumn(exclude_from_export=False, template_name='store/detail.html', orderable=False,
+                            verbose_name='')
+    delete = TemplateColumn(exclude_from_export=False, template_name='store/delete.html', orderable=False,
+                            verbose_name='')
+
+

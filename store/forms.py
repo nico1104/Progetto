@@ -81,7 +81,7 @@ class ProdottoAddForm (forms.ModelForm):
     class Meta:
 
         model = Product
-        fields = ('name', 'category', 'available_size', 'price', 'image')
+        fields = ('name', 'category', 'available_size', 'description', 'price', 'image')
 
     def save(self, commit=True):
         product = super().save(commit=False)

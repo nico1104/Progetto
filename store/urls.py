@@ -19,6 +19,9 @@ urlpatterns = [
     path('signup/fornitore/', views.SellerSignUpView.as_view(), name='seller_signup'),
     path('update_item/', views.updateItem, name="update_item"),
     path('process_order/', views.processOrder, name="process_order"),
+    path('delete/<int:id>', views.product_delete, name='delete'),
+    path('load_product', views.loaded_product_view, name='load-product'),
+    path('profile', views.profile_view, name='profile'),
 
 ]
 

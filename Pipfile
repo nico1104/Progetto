@@ -10,6 +10,7 @@ django = "*"
 six = "*"
 django-crispy-forms = "*"
 self = "*"
+django-tables2 = "*"
 
 [requires]
 python_version = "3.8"
