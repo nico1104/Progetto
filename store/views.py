@@ -20,11 +20,22 @@ from .models import *
 
 
 def store(request):
+    products = Product.objects.all()
+
+    if request.method == 'POST':
+        form = ProductSearchForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data['nome_prod'] == '':  # Campo ricerca vuoto
+                products = Product.objects.all()
+            else:
+                products = Product.objects.filter(Q(name__icontains=form.cleaned_data['nome_prod']))
+    else:
+        form = ProductSearchForm()
+
     if request.user.is_authenticated:
         if request.user.is_seller:
             seller = request.user.seller
-            products = Product.objects.all()
-            context = {'products': products}
+            context = {'products': products, 'form': form}
             return render(request, 'store/store.html', context)
         else:
             customer = request.user.customer
@@ -38,8 +49,8 @@ def store(request):
         order = {'get_cart_total': 0, 'get_cart_items': 0}
         cartItems = order['get_cart_items']
 
-    products = Product.objects.all()
-    context = {'products': products, 'cartItems': cartItems}
+    logged_user = request.user
+    context = {'logged_user': logged_user, 'products': products, 'cartItems': cartItems, 'form': form}
     return render(request, 'store/store.html', context)
 
 
@@ -247,22 +258,6 @@ class ProfileTextTable(tables.Table):
                             verbose_name='')
 
 
-def search_product(request):
-    if request.method == 'POST':
-        form = ProductSearchForm(request.POST)
-        if form.is_valid():
-            if form.cleaned_data['nome_prod'] == '':  # Campo ricerca vuoto
-                products = Product.objects.all()
-            else:
-                products = Product.filter(Q(nome__icontains=form.cleaned_data['nome_prod']))
-
-    else:
-        form = ProductSearchForm()
-    logged_user = request.user
-    context = {'logged_user': logged_user, 'products': products, 'form': form}
-    return render(request, 'store/store.html', context)
-
-
 def search_helmet(request):
     products = Product.objects.filter(category='Casco')
     context = {'products': products}
@@ -273,7 +268,6 @@ def search_gloves(request):
     products = Product.objects.filter(category='Guanti')
     context = {'products': products}
     return render(request, 'store/gloves.html', context)
-
 
 
 def search_jacket(request):
@@ -299,9 +293,15 @@ def search_boots(request):
     context = {'products': products}
     return render(request, 'store/boots.html', context)
 
+
 def search_stuff(request):
     products = Product.objects.filter(category='Manutenzione moto')
     context = {'products': products}
     return render(request, 'store/bikestuff.html', context)
 
 
+def product_description(request):
+    product = Product.objects.all()
+    description = Product.objects.get(description=Product.description)
+    context = {'product': product,'description': description}
+    return render(request, 'store/detail.html', context)

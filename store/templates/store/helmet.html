@@ -4,15 +4,6 @@
 {% load static %}
 
 {% block content %}
-
-
-   <form class="form-inline my-2" method="post">
-   {% csrf_token %}
-       {{ form|crispy }}
-       <button class="btn btn-outline-success my-2 my-sm-0 mr-1" type="submit">Cerca</button>
-  </form>
-
-
     <div class="row">
         {% for product in products %}
         <div class="col-lg-4">

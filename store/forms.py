@@ -89,10 +89,8 @@ class ProdottoAddForm (forms.ModelForm):
             'description': _('Descrizione del prodotto'),
             'price': _('Prezzo'),
             'image': _('Immagine del prodotto'),
-
-
-
         }
+
 
     def save(self, commit=True):
         product = super().save(commit=False)
@@ -103,4 +101,6 @@ class ProdottoAddForm (forms.ModelForm):
 
 class ProductSearchForm(forms.Form):
 
-    nome_prod = forms.CharField(max_length=40, label='Nome prodotto', required=False, initial="")
+    nome_prod = forms.CharField(max_length=40, label='Nome prodotto', required=False, initial="", widget= forms.TextInput
+                           (attrs={'placeholder':'Ricerca prodotto'}))
+

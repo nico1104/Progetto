@@ -26,8 +26,8 @@ urlpatterns = [
     path('tute/', views.search_suit, name="tute"),
     path('pantaloni/', views.search_trousers, name="pantaloni"),
     path('manutenzione/', views.search_stuff, name="manutenzione"),
-    path('cerca_prodotti/', views.search_product, name='cerca-prodotti'),
     path('delete/<int:id>', views.product_delete, name='delete'),
+    path('description/', views.product_description, name='description'),
     path('load_product', views.loaded_product_view, name='load-product'),
     path('profile', views.profile_view, name='profile'),
 

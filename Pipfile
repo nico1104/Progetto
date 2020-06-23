@@ -11,6 +11,7 @@ six = "*"
 django-crispy-forms = "*"
 self = "*"
 django-tables2 = "*"
+attrs = "*"
 
 [requires]
 python_version = "3.8"
