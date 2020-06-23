@@ -3,40 +3,22 @@
 {% load static %}
 
 {% block content %}
-    <div class="row">
-        {% for product in products %}
-        <div class="col-lg-4">
-            <img class="thumbnail" src="{{ product.imageURL }}">
-            <form class="box-element product"> <!--guardo in css style-->
-                <h6><strong>{{ product.name }}</strong></h6>
-                <hr>
-                <h7>{{ product.category }}</h7>
-                <hr>
 
+    <form class="box-element product"> <!--guardo in css style-->
+    <div class="container">
+            <div class="card" style="text-align: center; /*height: 80vh;*/ background: rgba(0, 0, 0, 0.1)">
+                <img class="thumbnail" src="{{ product.imageURL }}">
+                    <p><strong>Nome corso: </strong>{{ product.name }}</p>
+                    <p><strong>Costo corso: </strong>{{ product.price|floatformat:2 }}€</p>
+                    <p class="card-text"><strong>Posti rimanenti:</strong> {{ product.description }}</p>
+                    <p><strong>Sedute settimanali: </strong>{{ product.category }}</p>
+                    <p><strong>Descrizione: </strong></p>
+                    <p>{{ product.description }}</p>
 
-                <p>
-                {{ product.description }}
-                </p>
-
-                <a class="btn btn-outline-success" href="detail.html">Dettagli</a>
-                <h4 style="display: inline-block; float: right">€{{ product.price|floatformat:2 }}</h4>
-
-                <form method="POST" class="form-group" >
-                    {% csrf_token %}
-                <select>
-                    {% for choice in product.available_size %}
-                         <OPTION Value="Taglia" >{{ choice }}</OPTION>
-                    {% endfor %}
-
-                </select>
-                <button type="submit" data-product="{{ product.id }}" data-action="add" class="btn btn-success add-btn update-cart"
+                 <button type="submit" data-product="{{ product.id }}" data-action="add" class="btn btn-success add-btn update-cart"
                         style="margin-left:0;margin-right:auto;display:block;">Aggiungi al carrello</button>
-                <!--<button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>-->
-                </form>
-            </form>
+            </div>
 
-        </div>
-        {% endfor %}
     </div>
-
-{% endblock content %}
+</form>
+{% endblock %}

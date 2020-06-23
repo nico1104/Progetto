@@ -300,8 +300,9 @@ def search_stuff(request):
     return render(request, 'store/bikestuff.html', context)
 
 
-def product_description(request):
-    product = Product.objects.all()
-    description = Product.objects.get(description=Product.description)
-    context = {'product': product,'description': description}
+def product_description(request, id):
+    product = Product.objects.get(id=id)
+    logged_user = request.user
+    context = {'product': product, 'logged_user': logged_user}
     return render(request, 'store/detail.html', context)
+
