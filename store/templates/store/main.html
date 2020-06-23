@@ -1,3 +1,4 @@
+{% load crispy_forms_filters %}
 <!DOCTYPE html>
 {% load static %}
 <html>
@@ -45,22 +46,30 @@
                 </li>
             </ul>
             <div class="collapse navbar-collapse" id="navbarNav">
-             <li class="nav-item dropdown my-lg-0 navbar-nav">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Prodotti
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="#">Caschi</a>
-          <a class="dropdown-item" href="#">Giacche</a>
-          <a class="dropdown-item" href="#">Guanti</a>
-          <a class="dropdown-item" href="#">Pantaloni</a>
-          <a class="dropdown-item" href="#">Tute</a>
-          <a class="dropdown-item" href="#">Stivali</a>
-          <a class="dropdown-item" href="#">Manutenzione moto</a>
-        </div>
+                <li class="nav-item dropdown my-lg-0 navbar-nav">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Prodotti
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'store:caschi' %}">Caschi</a>
+                        <a class="dropdown-item" href="{% url 'store:giacche' %}">Giacche</a>
+                        <a class="dropdown-item" href="{% url 'store:guanti' %}">Guanti</a>
+                        <a class="dropdown-item" href="{% url 'store:pantaloni' %}">Pantaloni</a>
+                        <a class="dropdown-item" href="{% url 'store:tute' %}">Tute</a>
+                        <a class="dropdown-item" href="{% url 'store:stivali' %}">Stivali</a>
+                        <a class="dropdown-item" href="{% url 'store:manutenzione' %}">Manutenzione moto</a>
+                    </div>
+            </div>
+
+        
+            <form class="form-inline my-2" method="post">
+                 {% csrf_token %}
+                 {{ form|crispy }}
+                 <button class="btn btn-outline-success my-2 my-sm-0 mr-1" type="submit" value="Cerca">Cerca</button>
+            </form>
 
            {% if user.is_authenticated %}
-                {% if logged_user.is_cliente %}
+                {% if user.is_customer %}
                     <div class="form-inline my-2 my-lg-0">
                     <a href="{% url 'store:cart' %}">
                         <img  id="cart-icon" src="{% static 'images/cart.png' %}">
@@ -69,7 +78,6 @@
 
                     <li class="nav-item dropdown my-lg-0 navbar-nav">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {{ logged_user.username }}
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" style="margin-right: 0">
                             <a class="dropdown-item" href="{% url 'store:profile' %}">Profilo</a>
@@ -77,17 +85,27 @@
                         </div>
                     </li>
                 {% endif %}
-            {% else %}
-                <a href="{% url 'store:login' %}" class="btn btn-warning">Accedi</a>
-            {% endif %}
-	        </div>
+                {% if user.is_seller %}
+                    <div class="form-inline my-2 my-lg-0">
+                    <a href="{% url 'store:add-product' %}" class="btn btn-success" >Aggiungi prodotto</a>
+                      <li class="nav-item dropdown my-lg-0 navbar-nav">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" style="margin-right: 0">
+                            <a class="dropdown-item" href="{% url 'store:profile' %}">Profilo</a>
+                            <a class="dropdown-item" href="{% url 'store:logout' %}">Esci</a>
+                        </div>
+                    </li>
+                    </div>
+                {% endif %}
 
-            <form class="form-inline my-2">
-             <input class="form-control mr-sm-2" type="search" placeholder="Ricerca prodotti..." aria-label="Search">
-             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Cerca</button>
-            </form>
+           {% else %}
+                 <a href="{% url 'store:login' %}" class="btn btn-warning">Accedi</a>
+           {% endif %}
 
-        </div>
+
+
+         </div>
         </div>
     </nav>
 

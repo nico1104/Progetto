@@ -4,6 +4,7 @@ import datetime
 from django.contrib.auth import login, user_logged_out
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import AnonymousUser
+from django.db.models import Q
 from django.http import JsonResponse
 from django.template.defaulttags import comment
 from django.views.decorators.csrf import csrf_exempt
@@ -13,16 +14,24 @@ from django_tables2 import SingleTableView, TemplateColumn, RequestConfig
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, TemplateView
 
-from .forms import ProductForm, CustomerSignUpForm, SellerSignUpForm, ProdottoAddForm
+from .decorators import customer_required
+from .forms import ProductForm, CustomerSignUpForm, SellerSignUpForm, ProdottoAddForm, ProductSearchForm
 from .models import *
 
 
 def store(request):
     if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-        cartItems = order.get_cart_items
+        if request.user.is_seller:
+            seller = request.user.seller
+            products = Product.objects.all()
+            context = {'products': products}
+            return render(request, 'store/store.html', context)
+        else:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            items = order.orderitem_set.all()
+            cartItems = order.get_cart_items
+
     else:
         # Create empty cart for now for non-logged in user
         items = []
@@ -90,15 +99,6 @@ def processOrder(request):
 
 class SignUpView(TemplateView):
     template_name = 'registration/register.html'
-
-
-def home(request):
-    if request.user.is_authenticated:
-        if request.user.is_seller:
-            return redirect('registration/signup_form.html')
-        else:
-            return redirect('#')
-    return render(request, '#')
 
 
 class CustomerSignUpView(CreateView):
@@ -245,3 +245,63 @@ class ProfileTextTable(tables.Table):
                             verbose_name='')
     delete = TemplateColumn(exclude_from_export=False, template_name='store/delete.html', orderable=False,
                             verbose_name='')
+
+
+def search_product(request):
+    if request.method == 'POST':
+        form = ProductSearchForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data['nome_prod'] == '':  # Campo ricerca vuoto
+                products = Product.objects.all()
+            else:
+                products = Product.filter(Q(nome__icontains=form.cleaned_data['nome_prod']))
+
+    else:
+        form = ProductSearchForm()
+    logged_user = request.user
+    context = {'logged_user': logged_user, 'products': products, 'form': form}
+    return render(request, 'store/store.html', context)
+
+
+def search_helmet(request):
+    products = Product.objects.filter(category='Casco')
+    context = {'products': products}
+    return render(request, 'store/helmet.html', context)
+
+
+def search_gloves(request):
+    products = Product.objects.filter(category='Guanti')
+    context = {'products': products}
+    return render(request, 'store/gloves.html', context)
+
+
+
+def search_jacket(request):
+    products = Product.objects.filter(category='Giacca')
+    context = {'products': products}
+    return render(request, 'store/jacket.html', context)
+
+
+def search_trousers(request):
+    products = Product.objects.filter(category='Pantaloni')
+    context = {'products': products}
+    return render(request, 'store/trousers.html', context)
+
+
+def search_suit(request):
+    products = Product.objects.filter(category='Tuta')
+    context = {'products': products}
+    return render(request, 'store/suit.html', context)
+
+
+def search_boots(request):
+    products = Product.objects.filter(category='Stivali')
+    context = {'products': products}
+    return render(request, 'store/boots.html', context)
+
+def search_stuff(request):
+    products = Product.objects.filter(category='Manutenzione moto')
+    context = {'products': products}
+    return render(request, 'store/bikestuff.html', context)
+
+

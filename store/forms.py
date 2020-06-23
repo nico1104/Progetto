@@ -2,8 +2,8 @@ import self as self
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
-
-from store.models import Product, User, Customer
+from django.utils.translation import ugettext_lazy as _
+from store.models import Product, User, Customer, Seller
 
 
 class ProductForm(forms.ModelForm):
@@ -62,8 +62,8 @@ class SellerSignUpForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.is_seller = True
-        if commit:
-            user.save()
+        user.save()
+        seller = Seller.objects.create(user=user)
         return user
 
     def clean_email(self):
@@ -82,9 +82,25 @@ class ProdottoAddForm (forms.ModelForm):
 
         model = Product
         fields = ('name', 'category', 'available_size', 'description', 'price', 'image')
+        labels = {
+            'name': _('Nome'),
+            'category': _('Categoria del prodotto'),
+            'available_size': _('Taglie disponibili'),
+            'description': _('Descrizione del prodotto'),
+            'price': _('Prezzo'),
+            'image': _('Immagine del prodotto'),
+
+
+
+        }
 
     def save(self, commit=True):
         product = super().save(commit=False)
         product.image = self.cleaned_data.get('image')
         product.save()
         return product
+
+
+class ProductSearchForm(forms.Form):
+
+    nome_prod = forms.CharField(max_length=40, label='Nome prodotto', required=False, initial="")
