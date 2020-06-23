@@ -14,11 +14,6 @@
                 <h7>{{ product.category }}</h7>
                 <hr>
 
-
-                <p>
-                {{ product.description }}
-                </p>
-
                 <a class="btn btn-outline-success" href="{% url 'store:description' %}">Dettagli</a>
                 <h4 style="display: inline-block; float: right">€{{ product.price|floatformat:2 }}</h4>
 
