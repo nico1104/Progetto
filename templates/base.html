@@ -22,7 +22,7 @@
           <div class="row">
             <div class="col-6">
               <h1 class="logo">
-                <a href="{% url 'store:store' %}">
+                <a href="{% url 'store:store' %}" style="color: green">
                   Two wheels
 
                 </a>
@@ -33,7 +33,7 @@
                 <p class="pt-3">Acceduto come<strong>{{ user.username }}</strong>. <a href="{% url 'store:logout' %}">Esci</a>.</p>
               {% else %}
                 <a href="{% url 'store:login' %}" class="btn btn-light" role="button">Accedi</a>
-                <a href="{% url 'store:signup' %}" class="btn btn-primary" role="button">Registrati</a>
+                <a href="{% url 'store:signup' %}" class="btn btn-success" role="button">Registrati</a>
               {% endif %}
             </div>
           </div>

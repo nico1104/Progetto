@@ -101,6 +101,6 @@ class ProdottoAddForm (forms.ModelForm):
 
 class ProductSearchForm(forms.Form):
 
-    nome_prod = forms.CharField(max_length=40, label='Nome prodotto', required=False, initial="", widget= forms.TextInput
+    nome_prod = forms.CharField(max_length=40, label='', required=False, initial="", widget= forms.TextInput
                            (attrs={'placeholder':'Ricerca prodotto'}))
 
