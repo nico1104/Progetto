@@ -259,48 +259,55 @@ class ProfileTextTable(tables.Table):
 
 
 def search_helmet(request):
-    products = Product.objects.filter(category='Casco')
+
+    products = Product.objects.filter(category='Casco').order_by('price')
     context = {'products': products}
     return render(request, 'store/helmet.html', context)
 
 
 def search_gloves(request):
-    products = Product.objects.filter(category='Guanti')
+
+    products = Product.objects.filter(category='Guanti').order_by('price')
     context = {'products': products}
     return render(request, 'store/gloves.html', context)
 
 
 def search_jacket(request):
-    products = Product.objects.filter(category='Giacca')
+
+    products = Product.objects.filter(category='Giacca').order_by('price')
     context = {'products': products}
     return render(request, 'store/jacket.html', context)
 
 
 def search_trousers(request):
-    products = Product.objects.filter(category='Pantaloni')
+    products = Product.objects.filter(category='Pantaloni').order_by('price')
     context = {'products': products}
     return render(request, 'store/trousers.html', context)
 
 
 def search_suit(request):
-    products = Product.objects.filter(category='Tuta')
+
+    products = Product.objects.filter(category='Tuta').order_by('price')
     context = {'products': products}
     return render(request, 'store/suit.html', context)
 
 
 def search_boots(request):
-    products = Product.objects.filter(category='Stivali')
+
+    products = Product.objects.filter(category='Stivali').order_by('price')
     context = {'products': products}
     return render(request, 'store/boots.html', context)
 
 
 def search_stuff(request):
-    products = Product.objects.filter(category='Manutenzione moto')
+
+    products = Product.objects.filter(category='Manutenzione moto').order_by('price')
     context = {'products': products}
     return render(request, 'store/bikestuff.html', context)
 
 
 def product_description(request, id):
+
     product = Product.objects.get(id=id)
     logged_user = request.user
     context = {'product': product, 'logged_user': logged_user}

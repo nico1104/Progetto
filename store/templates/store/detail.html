@@ -1,22 +1,22 @@
-{% extends 'store/main.html' %}
+{% extends 'store/nav_dropdown.html' %}
 {% load crispy_forms_filters %}
 {% load static %}
 
 {% block content %}
 
     <form class="box-element product"> <!--guardo in css style-->
-    <div class="container">
-            <div class="card" style="text-align: center; /*height: 80vh;*/ background: rgba(0, 0, 0, 0.1)">
+    <div class="container" style="color: green">
+            <div class="card" style="text-align: center; /*height: 80vh;*/ background: rgba(0, 0, 0, 0.3)">
                 <img class="thumbnail" src="{{ product.imageURL }}">
-                    <p><strong>Nome corso: </strong>{{ product.name }}</p>
-                    <p><strong>Costo corso: </strong>{{ product.price|floatformat:2 }}€</p>
-                    <p class="card-text"><strong>Posti rimanenti:</strong> {{ product.description }}</p>
-                    <p><strong>Sedute settimanali: </strong>{{ product.category }}</p>
+                    <p><strong>Nome del prodotto: </strong>{{ product.name }}</p>
+                    <p><strong>Costo: </strong>{{ product.price|floatformat:2 }}€</p>
+                    <p class="card-text"><strong>Caratteristiche del prodotto:</strong> {{ product.description }}</p>
+                    <p><strong>Categoria: </strong>{{ product.category }}</p>
                     <p><strong>Descrizione: </strong></p>
                     <p>{{ product.description }}</p>
 
                  <button type="submit" data-product="{{ product.id }}" data-action="add" class="btn btn-success add-btn update-cart"
-                        style="margin-left:0;margin-right:auto;display:block;">Aggiungi al carrello</button>
+                        style="margin-left:auto;margin-right:auto;display:block;">Aggiungi al carrello</button>
             </div>
 
     </div>

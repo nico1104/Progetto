@@ -1,7 +1,4 @@
 {% load crispy_forms_filters %}
-{% load static %}
-
-{% load crispy_forms_filters %}
 <!DOCTYPE html>
 {% load static %}
 <html>
@@ -64,7 +61,6 @@
                     </div>
             </div>
 
-
            {% if user.is_authenticated %}
                 {% if user.is_customer %}
                     <div class="form-inline my-2 my-lg-0">
@@ -105,18 +101,11 @@
          </div>
         </div>
     </nav>
-         {% block content %}
-    <div class="container" style="height:1000px; width:100%;">
-        <form  method="post" enctype="multipart/form-data" action="add_product.html">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <input class="btn btn-success" type="submit" value="Carica" style="margin-left:auto;margin-right:auto;display:block;">
-        </form>
-    </div>
-
-{% endblock %}
 
 <div class="container">
+        {% block content %}
+
+        {% endblock %}
     </div>
 
 
@@ -127,4 +116,3 @@
     <script type="text/javascript" src="{% static 'js/cart.js' %}" ></script>
 </body>
 </html>
-
