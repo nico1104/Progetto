@@ -12,6 +12,7 @@ django-crispy-forms = "*"
 self = "*"
 django-tables2 = "*"
 attrs = "*"
+textdistance = "*"
 
 [requires]
 python_version = "3.8"

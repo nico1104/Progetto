@@ -43,6 +43,10 @@ def store(request):
             items = order.orderitem_set.all()
             cartItems = order.get_cart_items
 
+        tri = three_recommended_items(request)
+        if tri == 0:
+            tri = []
+
     else:
         # Create empty cart for now for non-logged in user
         items = []
@@ -50,7 +54,7 @@ def store(request):
         cartItems = order['get_cart_items']
 
     logged_user = request.user
-    context = {'logged_user': logged_user, 'products': products, 'cartItems': cartItems, 'form': form}
+    context = {'logged_user': logged_user, 'products': products, 'cartItems': cartItems, 'form': form, 'tri':tri}
     return render(request, 'store/store.html', context)
 
 
@@ -313,3 +317,41 @@ def product_description(request, id):
     context = {'product': product, 'logged_user': logged_user}
     return render(request, 'store/detail.html', context)
 
+
+def three_recommended_items(request):
+    all_products = Product.objects.all()
+    user_products = Product.objects.filter(user__email=request.user.email)
+    all_products = all_products.difference(user_products)
+
+
+    all_products_names = []
+    for p in all_products:
+        all_products_names.append(p.name)
+
+    user_products_names = []
+    for p in user_products:
+        user_products_names.append(p.name)
+
+    if len(all_products_names) < 3 or len(user_products_names) < 1:
+        return 0
+
+    import textdistance
+    # set test
+    list = [[user_products_names[0], all_products_names[0], round(textdistance.jaro_winkler(user_products_names[0], all_products_names[0]), 4)],
+            [user_products_names[0], all_products_names[1], round(textdistance.jaro_winkler(user_products_names[0], all_products_names[0]), 4)],
+            [user_products_names[0], all_products_names[2], round(textdistance.jaro_winkler(user_products_names[0], all_products_names[0]), 4)]]
+
+    for i in all_products_names:
+        for j in user_products_names:
+            d = round(textdistance.jaro_winkler(i, j), 4)
+            m = min([t[2] for t in list])
+            if d > m:
+                l = [j, i, d]
+                for k in range(3):
+                    if m == list[k][2]:
+                        list[k] = l
+                        break
+
+    from django.db.models import Q
+    list = Product.objects.filter(Q(name=list[0][1]) | Q(name=list[1][1]) | Q(name=list[2][1]))
+    return list
