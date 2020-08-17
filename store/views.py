@@ -21,7 +21,6 @@ from .models import *
 
 
 def store(request):
-
     products = Product.objects.all()
 
     if request.method == 'POST':
@@ -256,7 +255,6 @@ class ProfileTextTable(tables.Table):
     price = tables.Column(verbose_name='Prezzo')
     description = tables.Column(verbose_name='Descrizione')
 
-
     class Meta:
         model = Product
         template_name = "django_tables2/bootstrap4.html"
@@ -270,21 +268,18 @@ class ProfileTextTable(tables.Table):
 
 
 def search_helmet(request):
-
     products = Product.objects.filter(category='Casco').order_by('price')
     context = {'products': products}
     return render(request, 'store/helmet.html', context)
 
 
 def search_gloves(request):
-
     products = Product.objects.filter(category='Guanti').order_by('price')
     context = {'products': products}
     return render(request, 'store/gloves.html', context)
 
 
 def search_jacket(request):
-
     products = Product.objects.filter(category='Giacca').order_by('price')
     context = {'products': products}
     return render(request, 'store/jacket.html', context)
@@ -297,28 +292,24 @@ def search_trousers(request):
 
 
 def search_suit(request):
-
     products = Product.objects.filter(category='Tuta').order_by('price')
     context = {'products': products}
     return render(request, 'store/suit.html', context)
 
 
 def search_boots(request):
-
     products = Product.objects.filter(category='Stivali').order_by('price')
     context = {'products': products}
     return render(request, 'store/boots.html', context)
 
 
 def search_stuff(request):
-
     products = Product.objects.filter(category='Manutenzione moto').order_by('price')
     context = {'products': products}
     return render(request, 'store/bikestuff.html', context)
 
 
 def product_description(request, id):
-
     product = Product.objects.get(id=id)
     logged_user = request.user
     context = {'product': product, 'logged_user': logged_user}
@@ -327,9 +318,8 @@ def product_description(request, id):
 
 def three_recommended_items(request):
     all_products = Product.objects.all()
-    user_products = Product.objects.filter(user__email=request.user.email)
+    user_products = Product.objects.all()
     all_products = all_products.difference(user_products)
-
 
     all_products_names = []
     for p in all_products:
@@ -344,9 +334,15 @@ def three_recommended_items(request):
 
     import textdistance
     # set test
-    list = [[user_products_names[0], all_products_names[0], round(textdistance.jaro_winkler(user_products_names[0], all_products_names[0]), 4)],
-            [user_products_names[0], all_products_names[1], round(textdistance.jaro_winkler(user_products_names[0], all_products_names[0]), 4)],
-            [user_products_names[0], all_products_names[2], round(textdistance.jaro_winkler(user_products_names[0], all_products_names[0]), 4)]]
+    list = [[user_products_names[0], all_products_names[0],
+             round(textdistance.cosine(user_products_names[0], all_products_names[0]), 4)],
+            [user_products_names[0], all_products_names[1],
+             round(textdistance.jaro_winkler(user_products_names[0], all_products_names[0]), 4)],
+            [user_products_names[0], all_products_names[2],
+             round(textdistance.jaro_winkler(user_products_names[0], all_products_names[0]), 4)]]
+
+    # Jaro–Winkler distance is a measure of edit distance which gives more similar measures to words in which
+    # the beginning characters match.
 
     for i in all_products_names:
         for j in user_products_names:
@@ -362,3 +358,4 @@ def three_recommended_items(request):
     from django.db.models import Q
     list = Product.objects.filter(Q(name=list[0][1]) | Q(name=list[1][1]) | Q(name=list[2][1]))
     return list
+

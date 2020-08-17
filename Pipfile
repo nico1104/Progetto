@@ -13,6 +13,7 @@ self = "*"
 django-tables2 = "*"
 attrs = "*"
 textdistance = "*"
+scikit-learn = "*"
 
 [requires]
 python_version = "3.8"
