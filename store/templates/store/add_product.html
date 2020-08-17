@@ -107,10 +107,11 @@
     </nav>
          {% block content %}
     <div class="container" style="height:1000px; width:100%;">
-        <form  method="post" enctype="multipart/form-data" action="add_product.html">
+        <form  method="post" enctype="multipart/form-data" action="{% url 'store:add-product' %}">
             {% csrf_token %}
             {{ form|crispy }}
             <input class="btn btn-success" type="submit" value="Carica" style="margin-left:auto;margin-right:auto;display:block;">
+
         </form>
     </div>
 

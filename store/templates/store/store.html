@@ -3,7 +3,9 @@
 {% load static %}
 
 {% block content %}
+
     <div class="row">
+    <h4>Prodotti consigliati</h4>
     {% for product in tri %}
         <div class="col-lg-4">
             <img class="thumbnail" src="{{ product.imageURL }}">

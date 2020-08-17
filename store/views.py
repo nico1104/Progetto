@@ -13,6 +13,7 @@ import django_tables2 as tables
 from django_tables2 import SingleTableView, TemplateColumn, RequestConfig
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, TemplateView
+from django.utils.translation import ugettext_lazy as _
 
 from .decorators import customer_required
 from .forms import ProductForm, CustomerSignUpForm, SellerSignUpForm, ProdottoAddForm, ProductSearchForm
@@ -20,6 +21,7 @@ from .models import *
 
 
 def store(request):
+
     products = Product.objects.all()
 
     if request.method == 'POST':
@@ -54,7 +56,7 @@ def store(request):
         cartItems = order['get_cart_items']
 
     logged_user = request.user
-    context = {'logged_user': logged_user, 'products': products, 'cartItems': cartItems, 'form': form, 'tri':tri}
+    context = {'logged_user': logged_user, 'products': products, 'cartItems': cartItems, 'form': form, 'tri': tri}
     return render(request, 'store/store.html', context)
 
 
@@ -247,17 +249,22 @@ class ProfileTextTable(tables.Table):
     """
         Definisce una tabella personalizzata per visualizzare gli articoli inseriti dall'utente attualmente loggato
     """
+    name = tables.Column(verbose_name='Nome')
+    category = tables.Column(verbose_name='Categoria')
+    available_size = tables.Column(verbose_name='Taglie disponibili')
+    user = tables.Column(verbose_name='Utente')
+    price = tables.Column(verbose_name='Prezzo')
+    description = tables.Column(verbose_name='Descrizione')
+
 
     class Meta:
         model = Product
         template_name = "django_tables2/bootstrap4.html"
-        fields = ("name", "category", "available_size", "user", "price")
+        fields = ("name", "category", "available_size", "user", "price", "description")
         attrs = {"class": "table table-striped table-bordered sortable",
                  "data-toggle": "table"
                  }
 
-    detail = TemplateColumn(exclude_from_export=False, template_name='store/detail.html', orderable=False,
-                            verbose_name='')
     delete = TemplateColumn(exclude_from_export=False, template_name='store/delete.html', orderable=False,
                             verbose_name='')
 

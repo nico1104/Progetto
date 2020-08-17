@@ -31,6 +31,19 @@ class Seller(models.Model):
 
 
 SIZE_CHOICES = [
+    ('35', '35'),
+    ('36', '36'),
+    ('37', '37'),
+    ('38', '38'),
+    ('39', '39'),
+    ('40', '40'),
+    ('41', '41'),
+    ('42', '42'),
+    ('43', '43'),
+    ('44', '44'),
+    ('45', '45'),
+    ('46', '46'),
+    ('47', '47'),
     ('XS', 'XS'),
     ('S', 'S'),
     ('M', 'M'),
@@ -54,7 +67,7 @@ CATEGORY = [
 class Product(models.Model):
     name = models.CharField(max_length=200)
     category = models.CharField(max_length=50, choices=CATEGORY, null=True)
-    available_size = MultiSelectField(max_length=50, choices=SIZE_CHOICES, null=True)
+    available_size = MultiSelectField(max_length=50, choices=SIZE_CHOICES, null=True, blank = True)
     description = models.TextField(null=True)
     price = models.DecimalField(max_digits=7, decimal_places=2)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
