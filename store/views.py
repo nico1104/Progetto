@@ -14,6 +14,7 @@ from django_tables2 import SingleTableView, TemplateColumn, RequestConfig
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, TemplateView
 from django.utils.translation import ugettext_lazy as _
+from scipy import spatial
 
 from .decorators import customer_required
 from .forms import ProductForm, CustomerSignUpForm, SellerSignUpForm, ProdottoAddForm, ProductSearchForm
@@ -312,13 +313,21 @@ def search_stuff(request):
 def product_description(request, id):
     product = Product.objects.get(id=id)
     logged_user = request.user
-    context = {'product': product, 'logged_user': logged_user}
+
+    # list_word = similarity(request, id=id)
+
+    tri = three_recommended_items(request)
+    if tri == 0:
+        tri = []
+
+    context = {'product': product, 'logged_user': logged_user, 'tri': tri}
+
     return render(request, 'store/detail.html', context)
 
 
 def three_recommended_items(request):
     all_products = Product.objects.all()
-    user_products = Product.objects.all()
+    user_products = Product.objects.filter(user__email=request.user.email)
     all_products = all_products.difference(user_products)
 
     all_products_names = []
@@ -326,16 +335,16 @@ def three_recommended_items(request):
         all_products_names.append(p.name)
 
     user_products_names = []
-    for p in user_products:
+    for p in all_products:
         user_products_names.append(p.name)
 
-    if len(all_products_names) < 3 or len(user_products_names) < 1:
+    if len(all_products_names) < 3:
         return 0
 
     import textdistance
     # set test
     list = [[user_products_names[0], all_products_names[0],
-             round(textdistance.cosine(user_products_names[0], all_products_names[0]), 4)],
+             round(textdistance.jaro_winkler(user_products_names[0], all_products_names[0]), 4)],
             [user_products_names[0], all_products_names[1],
              round(textdistance.jaro_winkler(user_products_names[0], all_products_names[0]), 4)],
             [user_products_names[0], all_products_names[2],
@@ -359,3 +368,20 @@ def three_recommended_items(request):
     list = Product.objects.filter(Q(name=list[0][1]) | Q(name=list[1][1]) | Q(name=list[2][1]))
     return list
 
+
+"""
+       
+def similarity(request, id):
+    words = Product.objects.filter(name=Product.name)
+    product = Product.objects.get(id=id)
+    list_term = []
+
+    for _ in words:
+        result = 1 - spatial.distance.cosine(product, words)
+        list_term.append(result)
+    list_term.sort(reverse=True)
+    list_terms = list_term[:5]
+
+    return list_terms
+ Definisce una tabella personalizzata per visualizzare gli articoli inseriti dall'utente attualmente loggato
+    """
