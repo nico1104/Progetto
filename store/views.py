@@ -311,7 +311,7 @@ def product_description(request, id):
 
     # list_word = similarity(request, id=id)
 
-    tri = three_recommended_items(request)
+    tri = three_recommended_items(request, id)
     if tri == 0:
         tri = []
 
@@ -320,14 +320,19 @@ def product_description(request, id):
     return render(request, 'store/detail.html', context)
 
 
-def three_recommended_items(request):
+def three_recommended_items(request, id):
     all_products = Product.objects.all()
+    name_products = Product.objects.get(id=id)
+    nome = name_products.name
     user_products = Product.objects.filter(user__email=request.user.email)
     all_products = all_products.difference(user_products)
 
     all_products_names = []
     for p in all_products:
         all_products_names.append(p.name)
+
+    lista_nomi_prodotti = all_products_names
+    lista_nomi_prodotti.remove(nome)
 
     user_products_names = []
     for p in all_products:
@@ -348,16 +353,7 @@ def three_recommended_items(request):
     # Jaro–Winkler distance is a measure of edit distance which gives more similar measures to words in which
     # the beginning characters match.
 
-    for i in all_products_names:
-        for j in user_products_names:
-            d = round(textdistance.jaro_winkler(i, j), 4)
-            m = min([t[2] for t in list])
-            if d >= m:
-                l = [j, i, d]
-                for k in range(3):
-                    if m == list[k][2]:
-                        list[k] = l
-                        break
+
 
     from django.db.models import Q
     list = Product.objects.filter(Q(name=list[0][1]) | Q(name=list[1][1]) | Q(name=list[2][1]))
