@@ -5,8 +5,8 @@
 {% block content %}
 
     <form class="box-element product"> <!--guardo in css style-->
-    <div class="container" style="color: green">
-            <div class="card" style="text-align: center; /*height: 80vh;*/ background: rgba(0, 0, 0, 0.3)">
+    <div class="container" style="color: black">
+            <div class="card" style="text-align: center; /*height: 80vh;*/ background: rgb(242, 242, 242)">
                 <img class="thumbnail" src="{{ product.imageURL }}">
                     <p><strong>Nome del prodotto: </strong>{{ product.name }}</p>
                     <p><strong>Costo: </strong>{{ product.price|floatformat:2 }}€</p>
@@ -21,9 +21,13 @@
 
     </div>
 
+    <div class="container">
+        <h4>Prodotti consigliati</h4>
+    </div>
+
+
      <div class="row">
-    <h4>Prodotti consigliati</h4>
-    {% for product in tri %}
+         {% for product in tri %}
         <div class="col-lg-4">
             <img class="thumbnail" src="{{ product.imageURL }}">
             <form class="box-element product"> <!--guardo in css style-->

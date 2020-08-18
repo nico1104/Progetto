@@ -30,7 +30,7 @@
             </div>
             <div class="col-6 text-right">
               {% if user.is_authenticated %}
-                <p class="pt-3">Acceduto come<strong>{{ user.username }}</strong>. <a href="{% url 'store:logout' %}">Esci</a>.</p>
+                <p class="pt-3" style="color: aliceblue">Acceduto come <strong style="color: green">{{ user.username }}.</strong> <a href="{% url 'store:logout' %}" style="color:green">Esci.</a></p>
               {% else %}
                 <a href="{% url 'store:login' %}" class="btn btn-light" role="button">Accedi</a>
                 <a href="{% url 'store:signup' %}" class="btn btn-success" role="button">Registrati</a>

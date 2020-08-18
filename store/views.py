@@ -44,11 +44,6 @@ def store(request):
             order, created = Order.objects.get_or_create(customer=customer, complete=False)
             items = order.orderitem_set.all()
             cartItems = order.get_cart_items
-
-        tri = three_recommended_items(request)
-        if tri == 0:
-            tri = []
-
     else:
         # Create empty cart for now for non-logged in user
         items = []
@@ -56,7 +51,7 @@ def store(request):
         cartItems = order['get_cart_items']
 
     logged_user = request.user
-    context = {'logged_user': logged_user, 'products': products, 'cartItems': cartItems, 'form': form, 'tri': tri}
+    context = {'logged_user': logged_user, 'products': products, 'cartItems': cartItems, 'form': form}
     return render(request, 'store/store.html', context)
 
 
@@ -357,7 +352,7 @@ def three_recommended_items(request):
         for j in user_products_names:
             d = round(textdistance.jaro_winkler(i, j), 4)
             m = min([t[2] for t in list])
-            if d > m:
+            if d >= m:
                 l = [j, i, d]
                 for k in range(3):
                     if m == list[k][2]:
