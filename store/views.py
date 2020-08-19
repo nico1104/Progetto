@@ -230,14 +230,22 @@ def loaded_product_view(request):
         Returns:
              tutti i testi caricati dall'utente loggato
     """
+    if request.user.is_seller:
+        logged_user_username = request.user.username
+        loaded_products = Product.objects.filter(user=request.user.id)
+        table = ProfileTextTable(loaded_products)
+        RequestConfig(request).configure(table)
 
-    logged_user_username = request.user.username
-    loaded_products = Product.objects.filter(user=request.user.id)
-    table = ProfileTextTable(loaded_products)
-    RequestConfig(request).configure(table)
+        context = {'logged_user_username': logged_user_username, 'table': table}
+        return render(request, 'store/load_product.html', context)
 
-    context = {'logged_user_username': logged_user_username, 'table': table}
-    return render(request, 'store/load_product.html', context)
+    else:
+        logged_user_username = request.user.username
+        loaded_products = Product.objects.filter(user=request.user.id)
+        table = ProfileTextTable2(loaded_products)
+        RequestConfig(request).configure(table)
+        context = {'logged_user_username': logged_user_username, 'table': table}
+        return render(request, 'store/load_product.html', context)
 
 
 class ProfileTextTable(tables.Table):
@@ -261,6 +269,25 @@ class ProfileTextTable(tables.Table):
 
     delete = TemplateColumn(exclude_from_export=False, template_name='store/delete.html', orderable=False,
                             verbose_name='')
+
+
+class ProfileTextTable2(tables.Table):
+    """
+        Definisce una tabella personalizzata per visualizzare gli articoli ordinati dall'utente attualmente loggato
+    """
+
+    customer = tables.Column(verbose_name='Cliente')
+    date_ordered = tables.Column(verbose_name='Data di ordine')
+    complete = tables.Column(verbose_name='Completo')
+    transaction_id = tables.Column(verbose_name='Transazione')
+
+    class Meta:
+        model = Order
+        template_name = "django_tables2/bootstrap4.html"
+        fields = ("customer", "date_ordered", "complete", "transaction_id")
+        attrs = {"class": "table table-striped table-bordered sortable",
+                 "data-toggle": "table"
+                 }
 
 
 def search_helmet(request):
@@ -309,8 +336,6 @@ def product_description(request, id):
     product = Product.objects.get(id=id)
     logged_user = request.user
 
-    # list_word = similarity(request, id=id)
-
     tri = three_recommended_items(request, id)
     if tri == 0:
         tri = []
@@ -353,26 +378,6 @@ def three_recommended_items(request, id):
     # Jaro–Winkler distance is a measure of edit distance which gives more similar measures to words in which
     # the beginning characters match.
 
-
-
     from django.db.models import Q
     list = Product.objects.filter(Q(name=list[0][1]) | Q(name=list[1][1]) | Q(name=list[2][1]))
     return list
-
-
-"""
-       
-def similarity(request, id):
-    words = Product.objects.filter(name=Product.name)
-    product = Product.objects.get(id=id)
-    list_term = []
-
-    for _ in words:
-        result = 1 - spatial.distance.cosine(product, words)
-        list_term.append(result)
-    list_term.sort(reverse=True)
-    list_terms = list_term[:5]
-
-    return list_terms
- Definisce una tabella personalizzata per visualizzare gli articoli inseriti dall'utente attualmente loggato
-    """

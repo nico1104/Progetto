@@ -43,7 +43,12 @@
                             </div>
 
                             <div class="col-md-12">
-                                <a href="{% url 'store:load-product' %}" type="submit" class="btn btn-success" >Visualizza prodotti</a>
+                                {% if user.is_customer %}
+                                    <a href="{% url 'store:load-product' %}" type="submit" class="btn btn-success" >Visualizza ordini</a>
+                                {% endif %}
+                                {% if user.is_seller %}
+                                    <a href="{% url 'store:load-product' %}" type="submit" class="btn btn-success" >Visualizza prodotti inseriti</a>
+                                {% endif %}
                             </div>
                             <div><br></div>
                         </div>
