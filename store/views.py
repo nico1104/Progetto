@@ -16,7 +16,7 @@ from django.views.generic import CreateView, TemplateView
 from django.utils.translation import ugettext_lazy as _
 from scipy import spatial
 
-from .decorators import customer_required
+from .decorators import customer_required, seller_required
 from .forms import ProductForm, CustomerSignUpForm, SellerSignUpForm, ProdottoAddForm, ProductSearchForm
 from .models import *
 
@@ -54,7 +54,8 @@ def store(request):
     context = {'logged_user': logged_user, 'products': products, 'cartItems': cartItems, 'form': form}
     return render(request, 'store/store.html', context)
 
-
+@login_required()
+@customer_required()
 def cart(request):
     if request.user.is_authenticated:
         customer = request.user.customer
@@ -70,7 +71,8 @@ def cart(request):
     context = {'items': items, 'order': order, 'cartItems': cartItems}
     return render(request, 'store/cart.html', context)
 
-
+@login_required()
+@customer_required()
 def checkout(request):
     if request.user.is_authenticated:
         customer = request.user.customer
@@ -179,7 +181,8 @@ def updateItem(request):
 
     return JsonResponse('Item was added', safe=False)
 
-
+@login_required()
+@seller_required()
 def product_insert(request):
     if request.method == 'POST':
         form = ProdottoAddForm(request.POST, request.FILES)
@@ -195,6 +198,8 @@ def product_insert(request):
     return render(request, 'store/add_product.html', context)
 
 
+@login_required()
+@seller_required()
 def product_delete(request, id):
     """
         Elimina il prodotto corrispondente alla riga in cui viene premuto il tasto delete nella pagina che mostra
@@ -210,7 +215,7 @@ def product_delete(request, id):
     product.delete()
     return redirect('store:load-product')
 
-
+@login_required()
 def profile_view(request):
     """
         Funzione che si occupa della visualizzazione del profilo utente e gestione degli termini della balcklist e
@@ -222,7 +227,7 @@ def profile_view(request):
     context = {'logged_user_username': logged_user_username, 'email': request.user.email}
     return render(request, 'store/user_profile.html', context)
 
-
+@login_required()
 def loaded_product_view(request):
     """
         Funzione che si occupa della visualizzazione dei testi caricati dall'utente
@@ -289,49 +294,56 @@ class ProfileTextTable2(tables.Table):
                  "data-toggle": "table"
                  }
 
-
+@login_required()
 def search_helmet(request):
     products = Product.objects.filter(category='Casco').order_by('price')
     context = {'products': products}
     return render(request, 'store/helmet.html', context)
 
 
+@login_required()
 def search_gloves(request):
     products = Product.objects.filter(category='Guanti').order_by('price')
     context = {'products': products}
     return render(request, 'store/gloves.html', context)
 
 
+@login_required()
 def search_jacket(request):
     products = Product.objects.filter(category='Giacca').order_by('price')
     context = {'products': products}
     return render(request, 'store/jacket.html', context)
 
 
+@login_required()
 def search_trousers(request):
     products = Product.objects.filter(category='Pantaloni').order_by('price')
     context = {'products': products}
     return render(request, 'store/trousers.html', context)
 
 
+@login_required()
 def search_suit(request):
     products = Product.objects.filter(category='Tuta').order_by('price')
     context = {'products': products}
     return render(request, 'store/suit.html', context)
 
 
+@login_required()
 def search_boots(request):
     products = Product.objects.filter(category='Stivali').order_by('price')
     context = {'products': products}
     return render(request, 'store/boots.html', context)
 
 
+@login_required()
 def search_stuff(request):
     products = Product.objects.filter(category='Manutenzione moto').order_by('price')
     context = {'products': products}
     return render(request, 'store/bikestuff.html', context)
 
 
+@login_required()
 def product_description(request, id):
     product = Product.objects.get(id=id)
     logged_user = request.user

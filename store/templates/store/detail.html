@@ -38,7 +38,7 @@
                     <h7>{{ product.category }}</h7>
                     <hr>
 
-                    <a class="btn btn-outline-success" href="{% url 'store:corso-dettagli' product.id%}">Dettagli</a>
+                    <a class="btn btn-outline-success" href="{% url 'store:dettagli' product.id%}">Dettagli</a>
                     <h4 style="display: inline-block; float: right">€{{ product.price|floatformat:2 }}</h4>
 
                     <form method="POST" class="form-group" >
