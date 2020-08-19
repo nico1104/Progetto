@@ -4,6 +4,10 @@
 
 {% block content %}
 
+     <div class="container">
+        <h3>Prodotti disponibili</h3>
+    </div>
+
     <div class="row">
         {% for product in products %}
         <div class="col-lg-4">
@@ -13,10 +17,19 @@
                 <hr>
                 <h7>{{ product.category }}</h7>
                 <hr>
+            {% if user.is_customer %}
+                <a class="btn btn-outline-success" href="{% url 'store:dettagli' product.id%}">Dettagli</a>
+            {% endif %}
 
-                <a class="btn btn-outline-success" href="{% url 'store:corso-dettagli' product.id%}">Dettagli</a>
-                <h4 style="display: inline-block; float: right">€{{ product.price|floatformat:2 }}</h4>
+            {% if user.is_seller %}
+                <a class="btn btn-outline-success" style="color: green">Prezzo</a>
+            {% endif %}
 
+            <h4 style="display: inline-block; float: right">€{{ product.price|floatformat:2 }}</h4>
+
+
+
+           {% if user.is_customer %}
                 <form method="POST" class="form-group" >
                     {% csrf_token %}
                 <select>
@@ -25,9 +38,13 @@
                     {% endfor %}
 
                 </select>
+            {% endif %}
+                {% if user.is_customer %}
+
                 <button type="submit" data-product="{{ product.id }}" data-action="add" class="btn btn-success add-btn update-cart"
                         style="margin-left:0;margin-right:auto;display:block;">Aggiungi al carrello</button>
                 <!--<button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>-->
+                {% endif %}
                 </form>
             </form>
 

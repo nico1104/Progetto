@@ -4,9 +4,11 @@
 
 {% block content %}
 
+     <div class="container">
+        <h4>Ricerca per Pantaloni</h4>
+    </div>
 
-   <form class="form-inline my-2" method="post">
-   <div class="row">
+    <div class="row">
         {% for product in products %}
         <div class="col-lg-4">
             <img class="thumbnail" src="{{ product.imageURL }}">
@@ -16,7 +18,7 @@
                 <h7>{{ product.category }}</h7>
                 <hr>
 
-                <a class="btn btn-outline-success" href="{% url 'store:corso-dettagli' product.id%}">Dettagli</a>
+                <a class="btn btn-outline-success" href="{% url 'store:dettagli' product.id%}">Dettagli</a>
             <br>
                 <h4 style="display: inline-block; float: right">€{{ product.price|floatformat:2 }}</h4>
 
@@ -39,4 +41,6 @@
     </div>
 
 {% endblock content %}
+
+
 

@@ -4,6 +4,7 @@
 
 {% block content %}
 
+
     <form class="box-element product"> <!--guardo in css style-->
     <div class="container" style="color: black">
             <div class="card" style="text-align: center; /*height: 80vh;*/ background: rgb(242, 242, 242)">
@@ -21,42 +22,43 @@
 
     </div>
 
-    <div class="container">
-        <h4>Prodotti consigliati</h4>
-    </div>
-
-
-     <div class="row">
-         {% for product in tri %}
-        <div class="col-lg-4">
-            <img class="thumbnail" src="{{ product.imageURL }}">
-            <form class="box-element product"> <!--guardo in css style-->
-                <h6><strong>{{ product.name }}</strong></h6>
-                <hr>
-                <h7>{{ product.category }}</h7>
-                <hr>
-
-                <a class="btn btn-outline-success" href="{% url 'store:corso-dettagli' product.id%}">Dettagli</a>
-                <h4 style="display: inline-block; float: right">€{{ product.price|floatformat:2 }}</h4>
-
-                <form method="POST" class="form-group" >
-                    {% csrf_token %}
-                    <select>
-                        {% for choice in product.available_size %}
-                            <OPTION Value="Taglia" >{{ choice }}</OPTION>
-                        {% endfor %}
-
-                    </select>
-                    <button type="submit" data-product="{{ product.id }}" data-action="add" class="btn btn-success add-btn update-cart"
-                            style="margin-left:0;margin-right:auto;display:block;">Aggiungi al carrello</button>
-                    <!--<button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>-->
-                </form>
-            </form>
-
+    {% if user.is_customer %}
+        <div class="container">
+            <h4>Prodotti consigliati</h4>
         </div>
-    {% endfor %}
-    </div>
 
+
+         <div class="row">
+             {% for product in tri %}
+            <div class="col-lg-4">
+                <img class="thumbnail" src="{{ product.imageURL }}">
+                <form class="box-element product"> <!--guardo in css style-->
+                    <h6><strong>{{ product.name }}</strong></h6>
+                    <hr>
+                    <h7>{{ product.category }}</h7>
+                    <hr>
+
+                    <a class="btn btn-outline-success" href="{% url 'store:corso-dettagli' product.id%}">Dettagli</a>
+                    <h4 style="display: inline-block; float: right">€{{ product.price|floatformat:2 }}</h4>
+
+                    <form method="POST" class="form-group" >
+                        {% csrf_token %}
+                        <select>
+                            {% for choice in product.available_size %}
+                                <OPTION Value="Taglia" >{{ choice }}</OPTION>
+                            {% endfor %}
+
+                        </select>
+                        <button type="submit" data-product="{{ product.id }}" data-action="add" class="btn btn-success add-btn update-cart"
+                                style="margin-left:0;margin-right:auto;display:block;">Aggiungi al carrello</button>
+                        <!--<button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>-->
+                    </form>
+                </form>
+
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
 
 </form>
 {% endblock %}
