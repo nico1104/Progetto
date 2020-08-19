@@ -21,7 +21,7 @@
                 <a class="btn btn-outline-success" href="{% url 'store:dettagli' product.id%}">Dettagli</a>
             {% endif %}
 
-            {% if user.is_seller %}
+            {% if  not user.is_customer %}
                 <a class="btn btn-outline-success" style="color: green">Prezzo</a>
             {% endif %}
 
