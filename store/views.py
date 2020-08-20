@@ -22,6 +22,11 @@ from .models import *
 
 
 def store(request):
+    """
+            Funzione che si occupa della visualizzazione dei prodotti sullo store e dispone lo store a seconda
+            che l'utente sia un cliente o un fornitore.
+
+    """
     products = Product.objects.all()
 
     if request.method == 'POST':
@@ -57,6 +62,10 @@ def store(request):
 @login_required()
 @customer_required()
 def cart(request):
+    """
+            Funzione che si occupa della visualizzazione dei prodotti all'interno del carrello
+            ed è dedicata ad utenti che hanno effettuato il login come cliente.
+    """
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
@@ -74,6 +83,10 @@ def cart(request):
 @login_required()
 @customer_required()
 def checkout(request):
+    """
+            Funzione che si occupa del riepilogo dei dati dell'ordine.
+    """
+
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
@@ -91,6 +104,11 @@ def checkout(request):
 
 @csrf_exempt
 def processOrder(request):
+    """
+            Funzione che si occupa del processo che porta a termine l'ordine e completa l'ordine solo se
+            il prezzo totale corrispond econ il totale dell'ordine, per proteggersi da eventuali manomissini del prezzo.
+
+    """
     transaction_id = datetime.datetime.now().timestamp()
     body_unicode = request.body.decode('utf-8')
     data = json.loads(body_unicode)
@@ -116,6 +134,11 @@ class SignUpView(TemplateView):
 
 
 class CustomerSignUpView(CreateView):
+    """
+            Funzione che si occupa della registrazione del cliente.
+
+    """
+
     model = User
     form_class = CustomerSignUpForm
     template_name = 'registration/signup_form.html'
@@ -131,6 +154,11 @@ class CustomerSignUpView(CreateView):
 
 
 class SellerSignUpView(CreateView):
+    """
+                Funzione che si occupa della registrazione del fornitore.
+
+    """
+
     model = User
     form_class = SellerSignUpForm
     template_name = 'registration/signup_form.html'
@@ -147,6 +175,11 @@ class SellerSignUpView(CreateView):
 
 @login_required
 def logout(request):
+    """
+                Funzione che si occupa del logout e reindirizza al login.
+
+    """
+
     user = getattr(request, 'user', None)
     user = None
     user_logged_out.send(sender=User.__class__, request=request, user=User)
@@ -157,6 +190,12 @@ def logout(request):
 
 
 def updateItem(request):
+    """
+                Funzione che si occupa dell'aggiornamento dei prodotti nel carrello in seguito
+                ad operazione di aggiunta o rimozione.
+
+    """
+
     data = json.loads(request.body)
     productId = data['productId']
     action = data['action']
@@ -184,6 +223,14 @@ def updateItem(request):
 @login_required()
 @seller_required()
 def product_insert(request):
+    """
+        Funzione che si occupa dell'aggiunta del prodotto nello store da parte di in fornitore loggato.
+
+        :return:
+        Ritorna la stessa pagina per aggiungere un nuovo articolo.
+
+    """
+
     if request.method == 'POST':
         form = ProdottoAddForm(request.POST, request.FILES)
         if form.is_valid():
@@ -205,11 +252,11 @@ def product_delete(request, id):
         Elimina il prodotto corrispondente alla riga in cui viene premuto il tasto delete nella pagina che mostra
         gli articoli caricati dall'utente attualmente loggato.
 
-        Args:
-            id: id del prodotto
+        :param:
+            id: id del prodotto.
 
-        Returns:
-             Ritorna la stessa pagina aggiornata
+        :return:
+             Ritorna la stessa pagina aggiornata.
     """
     product = Product.objects.get(id=id)
     product.delete()
@@ -219,7 +266,11 @@ def product_delete(request, id):
 def profile_view(request):
     """
         Funzione che si occupa della visualizzazione del profilo utente e gestione degli termini della balcklist e
-        cancellazione degli articoli
+        cancellazione degli articoli.
+
+
+        :return:
+             Ritorna la pagina del profilo.
 
     """
 
@@ -230,10 +281,11 @@ def profile_view(request):
 @login_required()
 def loaded_product_view(request):
     """
-        Funzione che si occupa della visualizzazione dei testi caricati dall'utente
+        Funzione che si occupa della visualizzazione dei testi caricati dall'utente.
 
-        Returns:
-             tutti i testi caricati dall'utente loggato
+        :return:
+             tutti i prodotti caricati dall'utente loggato se l'utente è fornitore, oppure tutti gli ordini effettuati
+             se l'utente è un cliente.
     """
     if request.user.is_seller:
         logged_user_username = request.user.username
@@ -255,7 +307,9 @@ def loaded_product_view(request):
 
 class ProfileTextTable(tables.Table):
     """
-        Definisce una tabella personalizzata per visualizzare gli articoli inseriti dall'utente attualmente loggato
+        Definisce una tabella personalizzata per visualizzare gli articoli inseriti dall'utente attualmente loggato.
+
+        :param: tabella da renderizzare.
     """
     name = tables.Column(verbose_name='Nome')
     category = tables.Column(verbose_name='Categoria')
@@ -278,7 +332,9 @@ class ProfileTextTable(tables.Table):
 
 class ProfileTextTable2(tables.Table):
     """
-        Definisce una tabella personalizzata per visualizzare gli articoli ordinati dall'utente attualmente loggato
+        Definisce una tabella personalizzata per visualizzare gli articoli ordinati dall'utente attualmente loggato.
+
+        :param: tabella da renderizzare.
     """
 
     customer = tables.Column(verbose_name='Cliente')
@@ -296,6 +352,12 @@ class ProfileTextTable2(tables.Table):
 
 @login_required()
 def search_helmet(request):
+    """
+        Funzione che si occupa di visualizzare sullo store solo prodotti di categoria casco.
+
+        :return:
+                La pagina che prevede la visualizzazione solo di articoli di categoria casco.
+    """
     products = Product.objects.filter(category='Casco').order_by('price')
     context = {'products': products}
     return render(request, 'store/helmet.html', context)
@@ -303,6 +365,12 @@ def search_helmet(request):
 
 @login_required()
 def search_gloves(request):
+    """
+            Funzione che si occupa di visualizzare sullo store solo prodotti di categoria guanti.
+
+            :return:
+                    La pagina che prevede la visualizzazione solo di articoli di categoria guanti.
+    """
     products = Product.objects.filter(category='Guanti').order_by('price')
     context = {'products': products}
     return render(request, 'store/gloves.html', context)
@@ -310,6 +378,12 @@ def search_gloves(request):
 
 @login_required()
 def search_jacket(request):
+    """
+            Funzione che si occupa di visualizzare sullo store solo prodotti di categoria giacca.
+
+            :return:
+                    La pagina che prevede la visualizzazione solo di articoli di categoria giacca.
+    """
     products = Product.objects.filter(category='Giacca').order_by('price')
     context = {'products': products}
     return render(request, 'store/jacket.html', context)
@@ -317,6 +391,12 @@ def search_jacket(request):
 
 @login_required()
 def search_trousers(request):
+    """
+            Funzione che si occupa di visualizzare sullo store solo prodotti di categoria pantaloni.
+
+            :return:
+                    La pagina che prevede la visualizzazione solo di articoli di categoria pantaloni.
+    """
     products = Product.objects.filter(category='Pantaloni').order_by('price')
     context = {'products': products}
     return render(request, 'store/trousers.html', context)
@@ -324,6 +404,12 @@ def search_trousers(request):
 
 @login_required()
 def search_suit(request):
+    """
+            Funzione che si occupa di visualizzare sullo store solo prodotti di categoria tuta.
+
+            :return:
+                    La pagina che prevede la visualizzazione solo di articoli di categoria tuta.
+    """
     products = Product.objects.filter(category='Tuta').order_by('price')
     context = {'products': products}
     return render(request, 'store/suit.html', context)
@@ -331,6 +417,12 @@ def search_suit(request):
 
 @login_required()
 def search_boots(request):
+    """
+            Funzione che si occupa di visualizzare sullo store solo prodotti di categoria stivali.
+
+            :return:
+                    La pagina che prevede la visualizzazione solo di articoli di categoria stivali.
+    """
     products = Product.objects.filter(category='Stivali').order_by('price')
     context = {'products': products}
     return render(request, 'store/boots.html', context)
@@ -338,6 +430,11 @@ def search_boots(request):
 
 @login_required()
 def search_stuff(request):
+    """
+            Funzione che si occupa di visualizzare sullo store solo prodotti di categoria manutenzione moto.
+            :return:
+                    La pagina che prevede la visualizzazione solo di articoli di categoria manutenzione moto.
+    """
     products = Product.objects.filter(category='Manutenzione moto').order_by('price')
     context = {'products': products}
     return render(request, 'store/bikestuff.html', context)
@@ -345,6 +442,16 @@ def search_stuff(request):
 
 @login_required()
 def product_description(request, id):
+    """
+            Funzione che si occupa della descrizione del prodotto a cui l'utente è interessato.
+            Prevede anche la funzione di recommendation sugli articoli consigliati.
+
+            :param:
+                id: id del prodotto.
+
+            :return:
+                 Ritorna la pagina che si occupa della visualizzazione dei dettagli del singolo prodotto.
+    """
     product = Product.objects.get(id=id)
     logged_user = request.user
 
@@ -358,6 +465,14 @@ def product_description(request, id):
 
 
 def three_recommended_items(request, id):
+    """
+                Fuznione che si occupa dei prodotti consigliati per l'utente, controllando di consigliare il
+                prodotto stesso. Sfrutta il pacchetto textdistance e la similarità di levenshtein.
+    :param:
+                id: id del prodotto
+    :return:
+                Ritorna la lista dei prodotti consigliati
+    """
     all_products = Product.objects.all()
     name_products = Product.objects.get(id=id)
     nome = name_products.name
@@ -379,13 +494,13 @@ def three_recommended_items(request, id):
         return 0
 
     import textdistance
-    # set test
+
     list = [[user_products_names[0], all_products_names[0],
-             round(textdistance.jaro_winkler(user_products_names[0], all_products_names[0]), 4)],
+             round(textdistance.levenshtein(user_products_names[0], all_products_names[0]), 4)],
             [user_products_names[0], all_products_names[1],
-             round(textdistance.jaro_winkler(user_products_names[0], all_products_names[0]), 4)],
+             round(textdistance.levenshtein(user_products_names[0], all_products_names[0]), 4)],
             [user_products_names[0], all_products_names[2],
-             round(textdistance.jaro_winkler(user_products_names[0], all_products_names[0]), 4)]]
+             round(textdistance.levenshtein(user_products_names[0], all_products_names[0]), 4)]]
 
     # Jaro–Winkler distance is a measure of edit distance which gives more similar measures to words in which
     # the beginning characters match.
