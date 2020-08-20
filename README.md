@@ -3,6 +3,7 @@ Repository per il progetto di tecnologie web 2020.
 Per runnare il progetto in locale seguire quanto riportato in questo file: Creare una cartella che ospiti il progetto
 
 > mkdir directoryname
+
 > cd ./directoryname
 
 Se non ancora presente, installare python 3.7
@@ -20,6 +21,7 @@ Spostarsi nella cartella ./Progetto/
 Creare virtual env ed attivarlo
 
 >	python -m virtualenv venv
+
 >	source venv/bin/activate
 
 Installare i pacchetti richiesti per il funzionamento
