@@ -358,8 +358,20 @@ def search_helmet(request):
         :return:
                 La pagina che prevede la visualizzazione solo di articoli di categoria casco.
     """
+
+    if request.user.is_authenticated:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            items = order.orderitem_set.all()
+            cartItems = order.get_cart_items
+    else:
+        # Create empty cart for now for non-logged in user
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+
     products = Product.objects.filter(category='Casco').order_by('price')
-    context = {'products': products}
+    context = {'products': products, 'cartItems': cartItems}
     return render(request, 'store/helmet.html', context)
 
 
@@ -371,8 +383,19 @@ def search_gloves(request):
             :return:
                     La pagina che prevede la visualizzazione solo di articoli di categoria guanti.
     """
+    if request.user.is_authenticated:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            items = order.orderitem_set.all()
+            cartItems = order.get_cart_items
+    else:
+        # Create empty cart for now for non-logged in user
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+
     products = Product.objects.filter(category='Guanti').order_by('price')
-    context = {'products': products}
+    context = {'products': products, 'cartItems': cartItems}
     return render(request, 'store/gloves.html', context)
 
 
@@ -384,8 +407,19 @@ def search_jacket(request):
             :return:
                     La pagina che prevede la visualizzazione solo di articoli di categoria giacca.
     """
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    else:
+        # Create empty cart for now for non-logged in user
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+
     products = Product.objects.filter(category='Giacca').order_by('price')
-    context = {'products': products}
+    context = {'products': products, 'cartItems': cartItems}
     return render(request, 'store/jacket.html', context)
 
 
@@ -397,8 +431,19 @@ def search_trousers(request):
             :return:
                     La pagina che prevede la visualizzazione solo di articoli di categoria pantaloni.
     """
+    if request.user.is_authenticated:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            items = order.orderitem_set.all()
+            cartItems = order.get_cart_items
+    else:
+        # Create empty cart for now for non-logged in user
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+
     products = Product.objects.filter(category='Pantaloni').order_by('price')
-    context = {'products': products}
+    context = {'products': products, 'cartItems': cartItems}
     return render(request, 'store/trousers.html', context)
 
 
@@ -410,8 +455,19 @@ def search_suit(request):
             :return:
                     La pagina che prevede la visualizzazione solo di articoli di categoria tuta.
     """
+    if request.user.is_authenticated:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            items = order.orderitem_set.all()
+            cartItems = order.get_cart_items
+    else:
+        # Create empty cart for now for non-logged in user
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+
     products = Product.objects.filter(category='Tuta').order_by('price')
-    context = {'products': products}
+    context = {'products': products, 'cartItems': cartItems}
     return render(request, 'store/suit.html', context)
 
 
@@ -423,8 +479,19 @@ def search_boots(request):
             :return:
                     La pagina che prevede la visualizzazione solo di articoli di categoria stivali.
     """
+    if request.user.is_authenticated:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            items = order.orderitem_set.all()
+            cartItems = order.get_cart_items
+    else:
+        # Create empty cart for now for non-logged in user
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+
     products = Product.objects.filter(category='Stivali').order_by('price')
-    context = {'products': products}
+    context = {'products': products, 'cartItems': cartItems}
     return render(request, 'store/boots.html', context)
 
 
@@ -435,8 +502,20 @@ def search_stuff(request):
             :return:
                     La pagina che prevede la visualizzazione solo di articoli di categoria manutenzione moto.
     """
+
+    if request.user.is_authenticated:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            items = order.orderitem_set.all()
+            cartItems = order.get_cart_items
+    else:
+        # Create empty cart for now for non-logged in user
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+        cartItems = order['get_cart_items']
+
     products = Product.objects.filter(category='Manutenzione moto').order_by('price')
-    context = {'products': products}
+    context = {'products': products, 'cartItems': cartItems}
     return render(request, 'store/bikestuff.html', context)
 
 
