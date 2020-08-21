@@ -32,13 +32,13 @@ class TestViews(TestCase):
         self.assertEquals(response.status_code, 302, "Utente non loggato va reindirizzato")
         self.assertRedirects(response, '/accounts/login/?next=/profile', status_code=302, target_status_code=200)
 
-    def test_profilo_logged_cliente(self):
+    def test_profilo_logged_customer(self):
         self.customerLogin()
         response = self.client.get(reverse('store:profile'))
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(response, 'store/user_profile.html')
 
-    def test_profilo_logged_pt(self):
+    def test_profilo_logged_seller(self):
         self.customerLogin()
         response = self.client.get(reverse('store:profile'))
         self.assertEquals(response.status_code, 200)
